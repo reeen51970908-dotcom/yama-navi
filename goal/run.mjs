@@ -232,7 +232,8 @@ T('検索：タカオ／takao／八ヶ岳／ふじ／北海道・該当なし・
   await search(s, '八ヶ岳'); const y = await first(); assert(y.includes('赤岳') && y.includes('蓼科山'), `八ヶ岳 → 赤岳・蓼科山が出ない: ${y}`);
   await search(s, 'ふじ'); assert((await first())[0] === '富士山', 'ふじ → 富士山が先頭でない');
   await search(s, '北海道'); const h = await first();
-  assert(h.includes('旭岳') && h.includes('羊蹄山') && h.length === 2, `北海道 → 旭岳・羊蹄山: ${h}`);
+  const hp = await s.page.evaluate(() => [...document.querySelectorAll('#results .mcard .mmeta')].map((e) => e.textContent));
+  assert(h.includes('旭岳') && h.includes('羊蹄山') && h.length >= 2 && hp.every((t) => t.startsWith('北海道')), `北海道 → 北海道の山だけ: ${h}`);
   await shot(s, '03-search-hokkaido');
   await search(s, 'ぞぞぞぞ');
   await waitFor(s, () => !document.getElementById('noResult').hidden, null, { msg: '該当なし表示' });
@@ -644,7 +645,7 @@ T('詳細・全タブ・bodyで横スクロールがはみ出さない', async (
     await sleep(250);
     problems.push(...(await check('#page-' + id)).map((p) => `[${id}] ${p}`));
   }
-  for (const [q, n] of [['ふじさん', '富士山'], ['たてやま', '立山'], ['あさひだけ', '旭岳']]) {
+  for (const [q, n] of [['ふじさん', '富士山'], ['たてやま', '立山'], ['あさひだけ', '旭岳'], ['りしり', '利尻山']]) {
     await openBySearch(s, q, n);
     for (const season of ['summer', 'winter']) {
       await setSeason(s, season);

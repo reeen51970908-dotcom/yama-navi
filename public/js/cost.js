@@ -57,7 +57,7 @@ export function calcCar(m, origin, season) {
     ['高速料金', toll, highway > 0 ? `高速 約${Math.round(highway)}km×往復` : '一般道のみ'],
     ['駐車場', parking, m.parking?.name || ''],
   ];
-  if (shuttle) items.push(['シャトル', shuttle, '往復']);
+  if (shuttle) items.push([m.carShuttle.label || 'シャトル', shuttle, '往復']);
   if (ropeway) items.push([ropewayShort(m), ropeway, '必須']);
   if (fee) items.push(['入山料等', fee, '']);
   if (winter && m.winter.car === 'chains') res.notes.push({ type: 'warn', text: 'スタッドレス・チェーン必須' });
@@ -72,6 +72,7 @@ export function calcCar(m, origin, season) {
 }
 
 function ropewayShort(m) {
+  if (m.access.ropeway.label) return m.access.ropeway.label;
   const n = m.access.ropeway.name.replace(/（.*?）/g, '');
   return n.length > 10 ? 'ロープウェイ等' : n;
 }
