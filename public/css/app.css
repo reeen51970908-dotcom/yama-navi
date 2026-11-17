@@ -152,9 +152,31 @@ small { font-size: 0.78em; }
 .mlist > li, .hlist > li, .olist > li { animation: rise 0.5s var(--ease) both; animation-delay: calc(var(--i, 0) * 40ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
 
-.mcard, .hcard { position: relative; overflow: hidden; width: 100%; display: flex; align-items: center; gap: 12px; padding: 9px; border-radius: var(--r-md); text-align: left;
+.hcard { position: relative; overflow: hidden; width: 100%; display: flex; align-items: center; gap: 12px; padding: 9px; border-radius: var(--r-md); text-align: left;
   transition: transform 0.35s var(--spring), box-shadow 0.25s; }
+.mcard { position: relative; overflow: hidden; width: 100%; display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 14px; border-radius: 24px; text-align: left; transition: transform 0.35s var(--spring), box-shadow 0.25s; }
 .mcard:active { transform: scale(0.975); }
+.mhead { display: flex; align-items: flex-start; gap: 12px; }
+.mcard .mbody { gap: 3px; }
+.mcard .mname { font-size: 20px; letter-spacing: 0.01em; line-height: 1.25; }
+.mcard .mmeta { font-size: 13px; color: var(--ink-3); }
+.mcard .mthumb { width: 48px; height: 48px; border-radius: 14px; box-shadow: 0 2px 8px rgba(36, 66, 110, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.7); }
+.mlv { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--ink-2); margin-top: 1px; }
+.mdots { display: inline-flex; gap: 4px; }
+.mdots i { width: 11px; height: 11px; border-radius: 50%; background: #d3dae5; }
+.mlv.easy .mdots i.on { background: #7cc24a; } .mlv.easy { color: #4e8a2a; }
+.mlv.mid .mdots i.on { background: #e2a114; } .mlv.mid { color: #9a6a00; }
+.mlv.hard .mdots i.on { background: #ef7e4a; } .mlv.hard { color: #c4572a; }
+.mstats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.mstat { display: flex; flex-direction: column; gap: 2px; padding: 9px 10px; border-radius: 16px; min-width: 0;
+  background: rgba(255, 255, 255, 0.62); border: 1px solid rgba(255, 255, 255, 0.95); box-shadow: inset 0 1px 0 #fff; }
+.mstat .k { display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--ink-3); font-weight: 600; white-space: nowrap; }
+.mstat .k i { font-style: normal; font-size: 9.5px; font-weight: 800; color: #fff; background: var(--gA); padding: 0 5px; border-radius: 6px; line-height: 1.5; }
+.mstat b { font-size: 18px; font-weight: 900; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mstat b.na { font-size: 14px; color: var(--danger); line-height: 1.6; }
+.mstat.cheap { background: rgba(31, 169, 113, 0.08); border-color: rgba(31, 169, 113, 0.28); }
+.mstat.cheap b { color: #12805a; }
+.list-head small { display: block; width: 100%; margin-top: 1px; }
 .mthumb, .hthumb { flex: none; width: 76px; height: 58px; border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7); }
 .hthumb { width: 64px; height: 50px; }
 .mthumb svg, .hthumb svg { display: block; width: 100%; height: 100%; }
@@ -435,3 +457,7 @@ small { font-size: 0.78em; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: 0.01ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
   .blob { animation: none !important; }
 }
+
+/* 一覧カード：長い所在地でも横にはみ出さない */
+.mlist > li { min-width: 0; }
+.mcard .mmeta { white-space: normal; overflow: visible; }

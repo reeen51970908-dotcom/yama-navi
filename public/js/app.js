@@ -34,16 +34,49 @@ const el = {
 };
 
 // ------------------------------------------------------------------ 共通部品
+const LV_CLASS = ['', 'easy', 'easy', 'mid', 'hard', 'hard'];
+const shortPref = (p) => p.split('・').map((x) => (x === '北海道' ? x : x.replace(/[都府県]$/, ''))).join('・');
+const round100 = (n) => Math.round(n / 100) * 100;
+const fmtH = (h) => `約${Number.isInteger(h) ? h : h.toFixed(1)}h`;
+
+function costTile(label, c, cheaper) {
+  const v = c.available
+    ? `<b>¥${round100(c.total).toLocaleString('ja-JP')}</b>`
+    : `<b class="na">${state.season === 'winter' ? '冬季不可' : '利用不可'}</b>`;
+  return `<span class="mstat${cheaper ? ' cheap' : ''}"><span class="k">${label}${cheaper ? '<i>安い</i>' : ''}</span>${v}</span>`;
+}
+
 function cardHtml(m, i) {
-  const now = m.bestMonths.includes(currentMonth());
-  return `<li style="--i:${Math.min(i, 12)}"><button type="button" class="mcard glass rp" data-id="${m.id}">
-    <span class="mthumb">${mountainArt(m, { w: 160, h: 120, cls: 'art' })}</span>
-    <span class="mbody">
-      <span class="mname">${esc(m.name)}<small>${esc(m.kana)}</small></span>
-      <span class="mmeta">${esc(m.pref)}・${esc(m.area)}</span>
-      <span class="mtags"><span class="tag">${m.elev.toLocaleString()}m</span><span class="tag lv${m.difficulty}">${DIFFICULTY_LABEL[m.difficulty]}</span><span class="tag">${fmtDuration(m.courseTime)}</span>${now ? '<span class="tag hot">今が適期</span>' : ''}</span>
+  const dist = Math.round(haversineKm(state.origin, m.trailhead));
+  const c = calcAll(m, state.origin, state.season);
+  const both = c.car.available && c.transit.available;
+  const carCheap = both && c.car.total < c.transit.total;
+  const trCheap = both && c.transit.total < c.car.total;
+  const lv = LV_CLASS[m.difficulty];
+  return `<li style="--i:${Math.min(i, 12)}"><button type="button" class="mcard glass rp" data-id="${m.id}" aria-label="${esc(m.name)}の詳細を開く">
+    <span class="mhead">
+      <span class="mbody">
+        <span class="mname">${esc(m.name)}</span>
+        <span class="mmeta">${esc(shortPref(m.pref))}・標高${m.elev}m・出発地から約${dist.toLocaleString('ja-JP')}km</span>
+        <span class="mlv lv${m.difficulty} ${lv}"><span class="mdots" aria-hidden="true">${[1, 2, 3, 4, 5].map((k) => `<i${k <= m.difficulty ? ' class="on"' : ''}></i>`).join('')}</span>${DIFFICULTY_LABEL[m.difficulty]}</span>
+      </span>
+      <span class="mthumb" aria-hidden="true">${mountainArt(m, { w: 120, h: 120, cls: 'art' })}</span>
+    </span>
+    <span class="mstats">
+      <span class="mstat"><span class="k">行動時間</span><b>${fmtH(m.courseTime)}</b></span>
+      ${costTile('車(往復)', c.car, carCheap)}
+      ${costTile('電車・バス', c.transit, trCheap)}
     </span>
   </button></li>`;
+}
+
+function listNote() {
+  return `${esc(state.origin.name)}発・往復の目安（${state.season === 'winter' ? '冬季' : '夏季'}）`;
+}
+
+function refreshLists() {
+  renderResults();
+  renderBeginners();
 }
 
 function openMountain(id) {
@@ -63,7 +96,8 @@ function renderResults() {
   el.qClear.hidden = !q;
   const list = searchMountains(q, [...state.filters]);
   const filtered = state.filters.size > 0;
-  el.resultHead.textContent = q.trim() ? `「${q.trim()}」の検索結果 ${list.length}件` : filtered ? `絞り込み結果 ${list.length}件` : '人気の山';
+  const head = q.trim() ? `「${esc(q.trim())}」の検索結果 ${list.length}件` : filtered ? `絞り込み結果 ${list.length}件` : '人気の山';
+  el.resultHead.innerHTML = `${head}<small>${listNote()}</small>`;
   el.results.innerHTML = list.map(cardHtml).join('');
   el.noResult.hidden = list.length > 0;
   if (!list.length) el.noResult.textContent = q.trim() ? `「${q.trim()}」に該当する山が見つかりません。別のことばで探してみてください。` : '条件に合う山がありません。';
@@ -140,9 +174,15 @@ function renderReco() {
       <span class="slide-cap"><b>${esc(m.name)}</b><small>${esc(m.pref)}・${m.elev.toLocaleString()}m・${DIFFICULTY_LABEL[m.difficulty]}</small></span>
     </button>`).join('');
   el.dots.innerHTML = list.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}"></span>`).join('');
+  renderBeginners();
+  requestAnimationFrame(syncCarousel);
+}
+function renderBeginners() {
+  const mo = currentMonth();
   const beginners = MOUNTAINS.filter((m) => m.difficulty <= 2).sort((a, b) => (b.bestMonths.includes(mo) - a.bestMonths.includes(mo)) || b.popular - a.popular).slice(0, 10);
   el.beginner.innerHTML = beginners.map(cardHtml).join('');
-  requestAnimationFrame(syncCarousel);
+  const note = document.getElementById('beginnerNote');
+  if (note) note.textContent = listNote();
 }
 function syncCarousel() {
   const c = el.carousel;
@@ -356,6 +396,7 @@ function setOrigin(o) {
   state.origin = o;
   store.setOrigin(o);
   renderOrigin();
+  refreshLists();
   if (state.detail?.content) { renderMap(state.detail.m); renderCost(state.detail.m); }
   toast(`出発地を「${o.name}」にしました`);
 }
@@ -565,6 +606,7 @@ function setSeason(s) {
   if (state.season === s) return;
   state.season = s;
   if (state.detail?.content) renderCost(state.detail.m, true);
+  refreshLists();
 }
 
 function renderMap(m) {
