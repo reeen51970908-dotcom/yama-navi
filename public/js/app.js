@@ -78,7 +78,7 @@ function cardHtml(m, i) {
       <span class="mthumb" aria-hidden="true">${pic(m, { w: 120, h: 120, cls: 'art' }, 's')}</span>
     </span>
     <span class="mstats">
-      <span class="mstat"><span class="k">行動時間</span><b>${fmtH(m.courseTime)}</b></span>
+      <span class="mstat"><span class="k">標準タイム</span><b>${fmtH(m.courseTime)}</b></span>
       ${costTile('車(往復)', c.car, carCheap)}
       ${costTile('電車・バス', c.transit, trCheap)}
     </span>
@@ -115,9 +115,9 @@ function renderResults() {
   let list = searchMountains(q, [...state.filters]);
   if (state.sort === 'near') list = list.map((m) => [m, distFromOrigin(m)]).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
   const filtered = state.filters.size > 0;
-  const head = (q.trim() ? `「${esc(q.trim())}」の検索結果 ${list.length}件` : filtered ? `絞り込み結果 ${list.length}件` : state.sort === 'near' ? `全${list.length}座` : '人気の山')
+  const head = (q.trim() ? `「${esc(q.trim())}」の検索結果 ${list.length}件` : filtered ? `絞り込み結果 ${list.length}件` : state.sort === 'near' ? `全${list.length}座` : '人気の山<span class="head-hint">（タップで詳細）</span>')
     + (state.sort === 'near' ? '<span class="sort-tag">近い順</span>' : '');
-  el.resultHead.innerHTML = `${head}<small>${listNote()}</small>`;
+  el.resultHead.innerHTML = `<span class="head-main">${head}</span><small>${listNote()}</small>`;
   el.results.innerHTML = list.map(cardHtml).join('');
   el.noResult.hidden = list.length > 0;
   if (!list.length) el.noResult.textContent = q.trim() ? `「${q.trim()}」に該当する山が見つかりません。別のことばで探してみてください。` : '条件に合う山がありません。';
@@ -555,7 +555,7 @@ function detailHtml(m) {
         <div class="stat dt-difficulty"><span class="k">難易度</span>
           <span class="dots5" role="img" aria-label="難易度 ${m.difficulty}/5（${DIFFICULTY_LABEL[m.difficulty]}）">${[1, 2, 3, 4, 5].map((k) => `<i class="dot${k <= m.difficulty ? ' on' : ''}"></i>`).join('')}</span>
           <b>${DIFFICULTY_LABEL[m.difficulty]}</b></div>
-        <div class="stat dt-time"><span class="k">行動時間</span><b>${fmtDuration(m.courseTime)}</b><small>${esc(m.course)}</small></div>
+        <div class="stat dt-time"><span class="k">標準タイム</span><b>${fmtDuration(m.courseTime)}</b><small>${esc(m.course)}</small></div>
         <div class="stat"><span class="k">標高</span><b>${m.elev.toLocaleString()}<small>m</small></b></div>
         <div class="stat"><span class="k">冬季</span><b class="wc wc-${wc[1]}">${wc[0]}</b></div>
       </div>

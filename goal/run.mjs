@@ -247,6 +247,7 @@ T('検索：タカオ／takao／八ヶ岳／ふじ／北海道・該当なし・
   assert(await s.page.evaluate(() => document.activeElement.id) === 'q', 'クリア後に検索欄へフォーカスが戻らない');
   const n = await s.page.locator('#results .mcard').count();
   assert(n >= 30, `全件表示に戻らない: ${n}`);
+  assert((await text(s, '#resultHead')).startsWith('人気の山（タップで詳細）'), `見出し: ${await text(s, '#resultHead')}`);
   return `全${n}座`;
 });
 
@@ -289,7 +290,7 @@ T('絞り込み：初心者向け（難易度2以下）・百名山（100座）�
   return `全${all}座 → 初心者向け${lv.length}座・百名山${nHy}座・近い順の先頭「${firstNear}」`;
 });
 
-T('詳細：スケルトン→難易度・行動時間・適期12ヶ月・登山指数ABCAB・てんくらリンク', async (s) => {
+T('詳細：スケルトン→難易度・標準タイム・適期12ヶ月・登山指数ABCAB・てんくらリンク', async (s) => {
   await load(s);
   await search(s, 'たかお');
   await s.page.locator('#results .mcard').first().tap();
@@ -306,7 +307,9 @@ T('詳細：スケルトン→難易度・行動時間・適期12ヶ月・登山
     now: document.querySelectorAll('.months .m.now').length,
   }));
   assert(r.dotsAll === 5 && r.dots === 1 && r.level === '初級', `難易度表示: ${JSON.stringify(r)}`);
-  assert(r.time.includes('3時間') && r.time.includes('1号路'), `行動時間: ${r.time}`);
+  assert(r.time.includes('標準タイム') && r.time.includes('3時間') && r.time.includes('1号路'), `標準タイム: ${r.time}`);
+  const tile = await s.page.evaluate(() => document.querySelector('#results .mstat .k')?.textContent);
+  assert(tile === '標準タイム', `一覧の表記: ${tile}`);
   assert(r.months === 12 && r.on === 6 && r.now === 1, `適期バー: ${JSON.stringify(r)}`);
   await waitFor(s, () => document.querySelectorAll('#tkDays .tk-day').length === 5, null, { msg: '登山指数5日分' });
   const grades = await s.page.evaluate(() => [...document.querySelectorAll('#tkDays .grade')].map((g) => g.textContent).join(''));
