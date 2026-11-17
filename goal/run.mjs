@@ -250,7 +250,7 @@ T('検索：タカオ／takao／八ヶ岳／ふじ／北海道・該当なし・
   return `全${n}座`;
 });
 
-T('「初心者向け」チップで難易度2以下に絞り込み', async (s) => {
+T('絞り込み：初心者向け（難易度2以下）・百名山（100座）・出発地から近い順', async (s) => {
   await load(s);
   const all = await s.page.locator('#results .mcard').count();
   const chip = s.page.locator('.chip', { hasText: '初心者向け' });
@@ -266,7 +266,27 @@ T('「初心者向け」チップで難易度2以下に絞り込み', async (s) 
   await s.page.locator('.chip', { hasText: '日帰り' }).click();
   await chip.click();
   assert(await s.page.locator('#results .mcard').count() === all, '解除で全件に戻らない');
-  return `全${all}座 → 初心者向け${lv.length}座`;
+  // 百名山
+  const hy = s.page.locator('.chip', { hasText: '百名山' });
+  await hy.click();
+  const nHy = await s.page.locator('#results .mcard').count();
+  assert(nHy === 100, `百名山が100座でない: ${nHy}`);
+  await hy.click();
+  // 出発地から近い順（東京駅発）
+  const dists = () => s.page.evaluate(() => [...document.querySelectorAll('#results .mcard .mmeta')].map((e) => Number(/出発地から約([\d,]+)km/.exec(e.textContent)[1].replace(/,/g, ''))));
+  const near = s.page.locator('.sort-chip');
+  await near.click();
+  assert(await near.getAttribute('aria-pressed') === 'true', '近い順が押下状態にならない');
+  const d = await dists();
+  assert(d.length === all && d.every((x, i) => i === 0 || d[i - 1] <= x), `近い順に並んでいない: ${d.slice(0, 8)}`);
+  const firstNear = await s.page.evaluate(() => document.querySelector('#results .mname').firstChild.textContent);
+  await shot(s, '04-sort-near');
+  await s.page.reload({ waitUntil: 'domcontentloaded' });
+  await waitFor(s, () => document.documentElement.dataset.ready === '1', null, { msg: 'リロード' });
+  assert(await s.page.locator('.sort-chip').getAttribute('aria-pressed') === 'true', '近い順がリロード後に保持されない');
+  await s.page.locator('.sort-chip').click();
+  assert(await s.page.locator('.sort-chip').getAttribute('aria-pressed') === 'false', '近い順を解除できない');
+  return `全${all}座 → 初心者向け${lv.length}座・百名山${nHy}座・近い順の先頭「${firstNear}」`;
 });
 
 T('詳細：スケルトン→難易度・行動時間・適期12ヶ月・登山指数ABCAB・てんくらリンク', async (s) => {

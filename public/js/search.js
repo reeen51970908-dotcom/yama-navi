@@ -13,6 +13,7 @@ export const FILTERS = {
   day: { label: '日帰り', test: (m) => m.courseTime <= 8 },
   transit: { label: '公共交通OK', test: (m) => transitOk(m) },
   winter: { label: '冬も登れる', test: (m) => m.winter.climb === 'ok' },
+  hyakumeizan: { label: '百名山', test: (m) => m.tags.includes('日本百名山') },
 };
 
 /** 部分一致検索。先頭一致を優先、同点は人気順 */

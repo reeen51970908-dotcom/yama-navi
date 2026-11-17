@@ -1,6 +1,6 @@
 import { DEFAULT_ORIGIN } from '../data/stations.js';
 
-const K = { history: 'yamanavi.history', origin: 'yamanavi.origin' };
+const K = { history: 'yamanavi.history', origin: 'yamanavi.origin', sort: 'yamanavi.sort' };
 const MAX_HISTORY = 50;
 
 function read(key, fallback) {
@@ -34,3 +34,7 @@ export function toggleFav(id) {
   return !!h?.fav;
 }
 export const isFav = (id) => !!getHistory().find((h) => h.id === id)?.fav;
+
+/** 一覧の並び順：'popular'（人気順）か 'near'（出発地から近い順） */
+export const getSort = () => (read(K.sort, 'popular') === 'near' ? 'near' : 'popular');
+export const setSort = (v) => write(K.sort, v);

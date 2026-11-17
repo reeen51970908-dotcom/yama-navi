@@ -17,6 +17,7 @@ const state = {
   origin: store.getOrigin(),
   season: defaultSeason(currentMonth()),
   filters: new Set(),
+  sort: store.getSort(),
   page: 0,
   detail: null, // { m, token, pushed, map, abort }
 };
@@ -88,15 +89,20 @@ function openMountain(id) {
 // ------------------------------------------------------------------ 検索
 function renderChips() {
   el.chips.innerHTML = Object.entries(FILTERS).map(([k, f]) =>
-    `<button type="button" class="chip rp" data-f="${k}" aria-pressed="${state.filters.has(k)}">${f.label}</button>`).join('');
+    `<button type="button" class="chip rp" data-f="${k}" aria-pressed="${state.filters.has(k)}">${f.label}</button>`).join('')
+    + `<button type="button" class="chip sort-chip rp" data-sort="near" aria-pressed="${state.sort === 'near'}" aria-label="出発地から近い順に並べる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" fill="currentColor"/></svg>近い順</button>`;
 }
+
+const distFromOrigin = (m) => haversineKm(state.origin, m.trailhead);
 
 function renderResults() {
   const q = el.q.value;
   el.qClear.hidden = !q;
-  const list = searchMountains(q, [...state.filters]);
+  let list = searchMountains(q, [...state.filters]);
+  if (state.sort === 'near') list = list.map((m) => [m, distFromOrigin(m)]).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
   const filtered = state.filters.size > 0;
-  const head = q.trim() ? `「${esc(q.trim())}」の検索結果 ${list.length}件` : filtered ? `絞り込み結果 ${list.length}件` : '人気の山';
+  const head = (q.trim() ? `「${esc(q.trim())}」の検索結果 ${list.length}件` : filtered ? `絞り込み結果 ${list.length}件` : state.sort === 'near' ? `全${list.length}座` : '人気の山')
+    + (state.sort === 'near' ? '<span class="sort-tag">近い順</span>' : '');
   el.resultHead.innerHTML = `${head}<small>${listNote()}</small>`;
   el.results.innerHTML = list.map(cardHtml).join('');
   el.noResult.hidden = list.length > 0;
@@ -119,6 +125,13 @@ function bindSearch() {
   el.chips.addEventListener('click', (e) => {
     const b = e.target.closest('.chip');
     if (!b) return;
+    if (b.dataset.sort) {
+      state.sort = state.sort === 'near' ? 'popular' : 'near';
+      store.setSort(state.sort);
+      b.setAttribute('aria-pressed', String(state.sort === 'near'));
+      renderResults();
+      return;
+    }
     const f = b.dataset.f;
     state.filters.has(f) ? state.filters.delete(f) : state.filters.add(f);
     b.setAttribute('aria-pressed', String(state.filters.has(f)));

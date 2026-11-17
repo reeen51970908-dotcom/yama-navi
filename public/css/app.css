@@ -461,3 +461,10 @@ small { font-size: 0.78em; }
 /* 一覧カード：長い所在地でも横にはみ出さない */
 .mlist > li { min-width: 0; }
 .mcard .mmeta { white-space: normal; overflow: visible; }
+
+/* 並び替え（近い順） */
+.sort-chip { display: inline-flex; align-items: center; gap: 4px; padding-left: 10px; }
+.sort-chip svg { width: 14px; height: 14px; color: var(--danger); }
+.sort-chip[aria-pressed="true"] svg { color: #fff; }
+.sort-chip[aria-pressed="true"]::before { content: none; }
+.sort-tag { font-size: 11px; font-weight: 800; color: var(--accent); background: rgba(47, 116, 240, 0.1); padding: 1px 8px; border-radius: 999px; }

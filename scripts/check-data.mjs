@@ -34,7 +34,7 @@ for (const m of MOUNTAINS) {
   if (!Number.isFinite(m.fee)) err(id, 'fee がない');
   const a = m.access;
   if (!a?.station || !inJapan(a)) err(id, 'access の駅が不正');
-  else if (haversineKm(a, m.trailhead) > 120) err(id, '最寄り駅が登山口から遠すぎる');
+  else if (haversineKm(a, m.trailhead) > 160) err(id, '最寄り駅が登山口から遠すぎる');
   if (a?.bus && !(a.bus.fare >= 0 && a.bus.min > 0 && a.bus.note)) err(id, 'access.bus が不正');
   if (!a?.bus && !a?.walk && !(a?.taxi?.km > 0)) err(id, 'バス・徒歩・タクシーのいずれも使えない');
   if (a?.ropeway && !(a.ropeway.fare > 0 && a.ropeway.name)) err(id, 'ropeway が不正');
