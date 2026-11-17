@@ -55,3 +55,18 @@
 - [12-about.png](screenshots/12-about.png)
 - [13-direct-link-yari.png](screenshots/13-direct-link-yari.png)
 - [14-weather-error.png](screenshots/14-weather-error.png)
+
+## 本番環境での動作確認（https://yama-navi.yama-navi.workers.dev）
+
+GitHub Actions（E2E合格 → `cloudflare/wrangler-action@v3`）でデプロイ後、実Chrome（390×844・タッチ）で本番URLを確認。
+
+| 項目 | 結果 |
+|---|---|
+| 起動直後のフォーカス・「たかお」検索 | ✅ 先頭に高尾山 |
+| 天気（/api/weather → Open-Meteo 実データ） | ✅ 5日分の登山指数を表示（例：B A A A A） |
+| 地図タイル（国土地理院 淡色地図） | ✅ タイル12件すべて200で表示 |
+| 住所検索（/api/geocode → 国土地理院 実API） | ✅ 「長野県松本市」を出発地に設定し、地図・交通費が更新 |
+| API（health 200 / 不明パス 404 / POST 405 / 不正値 400） | ✅ |
+| pageerror・console.error | ✅ 0件 |
+
+スクリーンショット：[p1-search](screenshots/prod/p1-search.png)・[p2-detail](screenshots/prod/p2-detail.png)・[p3-map](screenshots/prod/p3-map.png)・[p4-geocode](screenshots/prod/p4-geocode.png)・[p5-map-matsumoto](screenshots/prod/p5-map-matsumoto.png)
