@@ -708,6 +708,8 @@ function bindKeys() {
 
 // ------------------------------------------------------------------ 起動
 function boot() {
+  const mc = document.getElementById('mtCount');
+  if (mc) mc.textContent = String(MOUNTAINS.length);
   installRipple();
   renderOrigin();
   renderChips();

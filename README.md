@@ -5,7 +5,7 @@
 
 ## 主な機能
 
-- **即検索**：検索欄は `autofocus`＋インラインscriptで即フォーカス。山データ（全国76座）はJSに同梱しているので、ネットワーク待ちゼロで検索できます
+- **即検索**：検索欄は `autofocus`＋インラインscriptで即フォーカス。山データ（全国80座以上・毎日追加中）はJSに同梱しているので、ネットワーク待ちゼロで検索できます
   - 正規化：NFKC／カタカナ→ひらがな／小文字化／空白・長音除去
   - 山名・よみ・ローマ字・都道府県・エリア・別名・タグで部分一致（先頭一致を優先）。Enterで先頭を開く、クリアボタン
   - 絞り込みチップ：今が適期／初心者向け（難易度2以下）／日帰り（8時間以下）／公共交通OK／冬も登れる
@@ -38,11 +38,13 @@ public/               フロントエンド（Workers Static Assets で配信）
   js/art.js           山のSVGイラスト
   js/api.js           /api 呼び出し＋直接呼び出しのフォールバック
   js/store.js         localStorage（履歴・出発地）
-  data/mountains.js   山データ（76座）
+  data/mountains.js   山データ（基本76座）
+  data/mountains-extra.js  追加の山データ（毎日約10座ずつ追加）
   data/stations.js    主要駅（135駅）
   data/shinkansen.js  新幹線の駅（全路線・約130駅）と路線の分岐点
 src/worker.js         API（/api/* のみ Worker が処理）
 scripts/dev-server.mjs  src/worker.js を Node で動かす開発サーバー
+scripts/check-data.mjs  山・駅データの検査（重複・必須項目・座標・交通費が計算できるか）
 goal/run.mjs          E2E テスト（Playwright＋実Chrome）
 goal/REPORT.md        テスト結果、goal/screenshots/ スクリーンショット
 .github/workflows/ci-deploy.yml  push で E2E → main ならデプロイ
@@ -65,7 +67,8 @@ goal/REPORT.md        テスト結果、goal/screenshots/ スクリーンショ�
 npm install
 npm run dev          # http://127.0.0.1:8787 （実際の外部APIを使用）
 npm run dev:mock     # 外部APIをフィクスチャに差し替え（オフライン開発）
-npm test             # E2E（goal/REPORT.md と goal/screenshots/ を更新）
+npm run check:data   # 山・駅データの検査（件数も表示）
+npm test             # データ検査＋E2E（goal/REPORT.md と goal/screenshots/ を更新）
 npx wrangler deploy  # Cloudflare Workers へデプロイ
 ```
 

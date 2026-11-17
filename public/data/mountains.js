@@ -7,7 +7,9 @@
 // ropeway.required: true なら交通費に含める（任意のものは注記のみ）。label は内訳の表示名
 // carShuttle: マイカー規制時に駐車場から乗り換えるバス・有料道路・フェリー等（往復）。label は内訳の表示名（既定：シャトル）
 
-export const MOUNTAINS = [
+import { EXTRA_MOUNTAINS } from './mountains-extra.js';
+
+const BASE_MOUNTAINS = [
   {
     id: 'takao', name: '高尾山', kana: 'たかおさん', romaji: 'takaosan', aliases: ['高尾', 'たかお', 'mt.takao'],
     pref: '東京都', area: '奥多摩・高尾', elev: 599, lat: 35.6251, lon: 139.2437,
@@ -1030,6 +1032,9 @@ export const MOUNTAINS = [
     tags: ['九州', '火山', '霧氷', '初心者', 'ロープウェイ'],
   },
 ];
+
+/** 全国の山（基本データ＋追加データ） */
+export const MOUNTAINS = [...BASE_MOUNTAINS, ...EXTRA_MOUNTAINS];
 
 export const MOUNTAIN_BY_ID = Object.fromEntries(MOUNTAINS.map((m) => [m.id, m]));
 
