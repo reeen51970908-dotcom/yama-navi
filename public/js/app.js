@@ -1,5 +1,6 @@
 import { MOUNTAINS, MOUNTAIN_BY_ID, DIFFICULTY_LABEL } from '../data/mountains.js';
 import { STATIONS } from '../data/stations.js';
+import { PHOTOS } from '../data/photos.js';
 import { $, $$, esc, normalize, currentMonth, fmtDuration, yen, haversineKm, reducedMotion, WEEK } from './util.js';
 import { searchMountains, FILTERS } from './search.js';
 import { mountainArt } from './art.js';
@@ -9,6 +10,19 @@ import { getWeather, geocode } from './api.js';
 import { TENKURA_BASIS, TENKURA_URL } from './tenkura.js';
 import * as store from './store.js';
 import { toast, hideToast, installRipple, countUp, onHSwipe } from './ui.js';
+
+/** 山の画像：SVGイラストの上に写真を重ねる（写真がない・読み込めない場合はイラストが見える） */
+function pic(m, art, size) {
+  const svg = mountainArt(m, art);
+  if (!PHOTOS[m.id]) return svg;
+  const src = `img/m/${m.id}${size === 's' ? '-s' : ''}.webp`;
+  return `${svg}<img class="mphoto" src="${src}" alt="${esc(m.name)}の写真" loading="${size === 'hero' ? 'eager' : 'lazy'}" decoding="async">`;
+}
+function photoCredit(m) {
+  const p = PHOTOS[m.id];
+  if (!p) return '';
+  return `写真：${esc(p.artist)}／<a href="${esc(p.source)}" target="_blank" rel="noopener">${esc(p.license)}</a>（Wikimedia Commons）`;
+}
 
 const BOOT_MIN_MS = 380;
 const DETAIL_SKELETON_MS = 500;
@@ -61,7 +75,7 @@ function cardHtml(m, i) {
         <span class="mmeta">${esc(shortPref(m.pref))}・標高${m.elev}m・出発地から約${dist.toLocaleString('ja-JP')}km</span>
         <span class="mlv lv${m.difficulty} ${lv}"><span class="mdots" aria-hidden="true">${[1, 2, 3, 4, 5].map((k) => `<i${k <= m.difficulty ? ' class="on"' : ''}></i>`).join('')}</span>${DIFFICULTY_LABEL[m.difficulty]}</span>
       </span>
-      <span class="mthumb" aria-hidden="true">${mountainArt(m, { w: 120, h: 120, cls: 'art' })}</span>
+      <span class="mthumb" aria-hidden="true">${pic(m, { w: 120, h: 120, cls: 'art' }, 's')}</span>
     </span>
     <span class="mstats">
       <span class="mstat"><span class="k">行動時間</span><b>${fmtH(m.courseTime)}</b></span>
@@ -183,7 +197,7 @@ function renderReco() {
   el.recoHead.textContent = `${mo}月が適期の山`;
   const list = MOUNTAINS.filter((m) => m.bestMonths.includes(mo)).sort((a, b) => b.popular - a.popular).slice(0, 8);
   el.carousel.innerHTML = list.map((m, i) => `<button type="button" class="slide glass" data-id="${m.id}" aria-label="${esc(m.name)}の詳細を開く（${i + 1}/${list.length}）">
-      <span class="slide-art">${mountainArt(m, { w: 320, h: 200 })}</span>
+      <span class="slide-art">${pic(m, { w: 320, h: 200 }, 'l')}</span>
       <span class="slide-cap"><b>${esc(m.name)}</b><small>${esc(m.pref)}・${m.elev.toLocaleString()}m・${DIFFICULTY_LABEL[m.difficulty]}</small></span>
     </button>`).join('');
   el.dots.innerHTML = list.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}"></span>`).join('');
@@ -230,7 +244,7 @@ function renderHistory() {
       <div class="hbg hbg-fav" aria-hidden="true">★ ${h.fav ? 'お気に入り解除' : 'お気に入り'}</div>
       <div class="hbg hbg-del" aria-hidden="true">削除 🗑️</div>
       <button type="button" class="hcard glass" data-id="${m.id}" aria-label="${esc(m.name)}の詳細を開く${h.fav ? '（お気に入り）' : ''}">
-        <span class="hthumb">${mountainArt(m, { w: 120, h: 90 })}</span>
+        <span class="hthumb">${pic(m, { w: 120, h: 90 }, 's')}</span>
         <span class="mbody"><span class="mname">${h.fav ? '<span class="fav-star" aria-hidden="true">★</span>' : ''}${esc(m.name)}<small>${esc(m.kana)}</small></span>
         <span class="mmeta">${esc(m.pref)}・${m.elev.toLocaleString()}m</span>
         <span class="mmeta small">${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} に表示</span></span>
@@ -523,10 +537,11 @@ function detailHtml(m) {
   const rw = m.access.ropeway;
   return `<article class="dt-content">
   <header class="hero">
-    <div class="hero-art">${mountainArt(m, { w: 390, h: 260 })}</div>
+    <div class="hero-art">${pic(m, { w: 390, h: 260 }, 'hero')}</div>
     <div class="hero-shade"></div>
     <button type="button" class="hero-btn dt-back glass rp" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <button type="button" class="hero-btn dt-fav glass rp" aria-pressed="${fav}" aria-label="お気に入り">${fav ? '★' : '☆'}</button>
+    ${PHOTOS[m.id] ? `<p class="hero-credit">${photoCredit(m)}</p>` : ''}
     <div class="hero-text">
       <p class="hero-kana">${esc(m.kana)}</p>
       <h2 id="dtTitle">${esc(m.name)}</h2>
@@ -582,6 +597,7 @@ function detailHtml(m) {
         <dt>駐車場</dt><dd>${esc(m.parking.name)}（${m.parking.fee ? m.parking.fee.toLocaleString() + '円/日' : '無料'}）${m.carShuttle ? `<br><small>${esc(m.carShuttle.note)}</small>` : ''}</dd>
         <dt>入山料</dt><dd>${m.fee ? m.fee.toLocaleString() + '円' : 'なし'}${m.feeNote ? `<br><small>${esc(m.feeNote)}</small>` : ''}</dd>
         <dt>冬季の注意</dt><dd>${esc(m.winter.note)}</dd>
+        ${PHOTOS[m.id] ? `<dt>写真</dt><dd><small>${photoCredit(m)}</small></dd>` : ''}
       </dl>
       <div class="tags-row">${m.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     </section>
@@ -721,6 +737,9 @@ function bindKeys() {
 
 // ------------------------------------------------------------------ 起動
 function boot() {
+  // 写真が読み込めなければ下のイラストを見せる
+  document.addEventListener('error', (e) => { if (e.target?.classList?.contains('mphoto')) e.target.remove(); }, true);
+  document.addEventListener('load', (e) => { if (e.target?.classList?.contains('mphoto')) e.target.classList.add('loaded'); }, true);
   const mc = document.getElementById('mtCount');
   if (mc) mc.textContent = String(MOUNTAINS.length);
   installRipple();
