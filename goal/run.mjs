@@ -267,6 +267,16 @@ T('絞り込み：初心者向け（難易度2以下）・百名山（100座）�
   await s.page.locator('.chip', { hasText: '日帰り' }).click();
   await chip.click();
   assert(await s.page.locator('#results .mcard').count() === all, '解除で全件に戻らない');
+  // 一覧の季節切替
+  await s.page.locator('#resultHead [data-season-btn="winter"]').click();
+  await waitFor(s, () => document.querySelector('#resultHead [data-season-btn="winter"]')?.getAttribute('aria-pressed') === 'true'
+    && document.querySelector('#resultHead .ln-text').textContent.includes('冬季'), null, { msg: '一覧の季節が冬季になる' });
+  const naW = await s.page.evaluate(() => document.querySelectorAll('#results .mstat b.na').length);
+  assert(naW > 0, '冬季に「冬季不可」の山が表示されない');
+  await shot(s, '04-list-winter');
+  await s.page.locator('#resultHead [data-season-btn="summer"]').click();
+  await waitFor(s, () => document.querySelector('#resultHead .ln-text').textContent.includes('夏季')
+    && document.querySelectorAll('#results .mstat b.na').length < 5, null, { msg: '一覧の季節が夏季に戻る' });
   // 百名山
   const hy = s.page.locator('.chip', { hasText: '百名山' });
   await hy.click();

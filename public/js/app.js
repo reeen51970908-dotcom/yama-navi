@@ -86,7 +86,11 @@ function cardHtml(m, i) {
 }
 
 function listNote() {
-  return `${esc(state.origin.name)}発・往復の目安（${state.season === 'winter' ? '冬季' : '夏季'}）`;
+  const w = state.season === 'winter';
+  return `<span class="ln-text">${esc(state.origin.name)}発・往復の目安（${w ? '冬季' : '夏季'}）</span>`
+    + `<span class="mini-seg" role="group" aria-label="交通費の季節" data-season="${state.season}">`
+    + `<button type="button" data-season-btn="summer" aria-pressed="${!w}" aria-label="夏季">☀️ 夏</button>`
+    + `<button type="button" data-season-btn="winter" aria-pressed="${w}" aria-label="冬季">❄️ 冬</button></span>`;
 }
 
 function refreshLists() {
@@ -117,7 +121,7 @@ function renderResults() {
   const filtered = state.filters.size > 0;
   const head = (q.trim() ? `「${esc(q.trim())}」の検索結果 ${list.length}件` : filtered ? `絞り込み結果 ${list.length}件` : state.sort === 'near' ? `全${list.length}座` : '人気の山<span class="head-hint">（タップで詳細）</span>')
     + (state.sort === 'near' ? '<span class="sort-tag">近い順</span>' : '');
-  el.resultHead.innerHTML = `<span class="head-main">${head}</span><small>${listNote()}</small>`;
+  el.resultHead.innerHTML = `<span class="head-main">${head}</span><small class="list-note">${listNote()}</small>`;
   el.results.innerHTML = list.map(cardHtml).join('');
   el.noResult.hidden = list.length > 0;
   if (!list.length) el.noResult.textContent = q.trim() ? `「${q.trim()}」に該当する山が見つかりません。別のことばで探してみてください。` : '条件に合う山がありません。';
@@ -152,6 +156,8 @@ function bindSearch() {
     renderResults();
   });
   document.addEventListener('click', (e) => {
+    const sb = e.target.closest('[data-season-btn]');
+    if (sb) { setSeason(sb.dataset.seasonBtn); return; }
     const c = e.target.closest('.mcard, .slide');
     if (c?.dataset.id) openMountain(c.dataset.id);
   });
@@ -209,7 +215,7 @@ function renderBeginners() {
   const beginners = MOUNTAINS.filter((m) => m.difficulty <= 2).sort((a, b) => (b.bestMonths.includes(mo) - a.bestMonths.includes(mo)) || b.popular - a.popular).slice(0, 10);
   el.beginner.innerHTML = beginners.map(cardHtml).join('');
   const note = document.getElementById('beginnerNote');
-  if (note) note.textContent = listNote();
+  if (note) note.innerHTML = listNote();
 }
 function syncCarousel() {
   const c = el.carousel;
