@@ -48,8 +48,7 @@ if (MOCK || WEATHER_FAIL) {
     if (MOCK && url.hostname === 'msearch.gsi.go.jp') {
       stats.geocode++;
       const q = url.searchParams.get('q') || '';
-      const list = fixtures.geocode.filter((f) => f.properties.title.includes(q) || q.includes('松本') && f.properties.title.includes('松本'));
-      return Response.json(q.includes('存在しない') ? [] : list.length ? list : fixtures.geocode.slice(0, 2));
+      return Response.json(fixtures.geocode.filter((f) => f.properties.title.includes(q)));
     }
     return realFetch(input, init);
   };
