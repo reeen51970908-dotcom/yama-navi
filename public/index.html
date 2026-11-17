@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eef4fb">
+<meta name="description" content="やまナビ：全国の山を一瞬で検索。登山指数（A/B/C）、出発地からの地図・往復交通費・移動時間をまとめて確認できる登山計画アプリ。">
+<title>やまナビ</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<link rel="modulepreload" href="js/app.js">
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+
+<div class="app" id="app">
+  <header class="topbar glass">
+    <button id="menuBtn" class="icon-btn hamburger rp" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="drawer">
+      <span></span><span></span><span></span>
+    </button>
+    <h1 class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20 9 8l3.5 5L15 9l7 11z" fill="currentColor"/><path d="m9 8 1.8 3H7.2z" fill="#fff"/></svg>やまナビ</h1>
+    <button id="originChip" class="origin-chip glass-chip rp" type="button" aria-haspopup="dialog" aria-controls="originSheet">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" fill="currentColor"/></svg>
+      <span class="origin-name" id="originName">東京駅</span><span class="origin-suffix">発</span>
+    </button>
+  </header>
+
+  <div class="searchbar glass" role="search">
+    <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <input id="q" type="search" autofocus autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
+      placeholder="山名・よみ・エリアで検索（例：たかお）" aria-label="山を検索" aria-controls="results">
+    <button id="qClear" class="clear-btn rp" type="button" aria-label="検索語をクリア" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <script>document.getElementById('q').focus();</script>
+
+  <div class="below">
+    <nav class="tabs glass" role="tablist" aria-label="表示切替">
+      <button class="tab rp" role="tab" id="tab-search" aria-controls="page-search" aria-selected="true" data-i="0">検索</button>
+      <button class="tab rp" role="tab" id="tab-reco" aria-controls="page-reco" aria-selected="false" data-i="1" tabindex="-1">おすすめ</button>
+      <button class="tab rp" role="tab" id="tab-history" aria-controls="page-history" aria-selected="false" data-i="2" tabindex="-1">履歴</button>
+      <span class="tab-ind" aria-hidden="true"></span>
+    </nav>
+
+    <main class="pager" id="pager">
+      <section class="page" id="page-search" role="tabpanel" aria-labelledby="tab-search">
+        <div class="chips" id="chips" role="group" aria-label="絞り込み"></div>
+        <h2 class="list-head" id="resultHead">人気の山</h2>
+        <ul class="mlist" id="results" aria-live="polite"></ul>
+        <p class="empty" id="noResult" hidden></p>
+      </section>
+      <section class="page" id="page-reco" role="tabpanel" aria-labelledby="tab-reco">
+        <h2 class="list-head" id="recoHead">今月が適期の山</h2>
+        <div class="carousel" id="carousel" aria-roledescription="カルーセル" aria-label="今月が適期の山"></div>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <h2 class="list-head">初心者向けの山</h2>
+        <ul class="mlist" id="beginnerList"></ul>
+      </section>
+      <section class="page" id="page-history" role="tabpanel" aria-labelledby="tab-history">
+        <h2 class="list-head">最近見た山 <small>左へフリックで削除・右へフリックでお気に入り</small></h2>
+        <ul class="hlist" id="historyList"></ul>
+        <div class="empty" id="historyEmpty" hidden>
+          <p>まだ履歴はありません。</p><p>山を開くと自動で記録されます。</p>
+        </div>
+      </section>
+    </main>
+
+    <div class="boot-skeleton" id="bootSkeleton" aria-hidden="true">
+      <div class="sk sk-tabs"></div>
+      <div class="sk-row"><div class="sk sk-chip"></div><div class="sk sk-chip"></div><div class="sk sk-chip"></div><div class="sk sk-chip"></div></div>
+      <div class="sk sk-line w40"></div>
+      <div class="sk-card"><div class="sk sk-thumb"></div><div class="sk-col"><div class="sk sk-line w60"></div><div class="sk sk-line w80"></div></div></div>
+      <div class="sk-card"><div class="sk sk-thumb"></div><div class="sk-col"><div class="sk sk-line w50"></div><div class="sk sk-line w80"></div></div></div>
+      <div class="sk-card"><div class="sk sk-thumb"></div><div class="sk-col"><div class="sk sk-line w60"></div><div class="sk sk-line w70"></div></div></div>
+      <div class="sk-card"><div class="sk sk-thumb"></div><div class="sk-col"><div class="sk sk-line w40"></div><div class="sk sk-line w80"></div></div></div>
+      <div class="sk-card"><div class="sk sk-thumb"></div><div class="sk-col"><div class="sk sk-line w60"></div><div class="sk sk-line w60"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ドロワー -->
+<div class="scrim" id="drawerScrim" hidden></div>
+<aside class="drawer glass" id="drawer" aria-label="メニュー" aria-hidden="true" inert>
+  <div class="drawer-head"><span class="brand">やまナビ</span><small>登山計画をもっと手軽に</small></div>
+  <nav class="drawer-nav">
+    <button type="button" class="dnav rp" data-act="origin"><span aria-hidden="true">📍</span>出発地を設定</button>
+    <button type="button" class="dnav rp" data-act="reco"><span aria-hidden="true">✨</span>おすすめ</button>
+    <button type="button" class="dnav rp" data-act="history"><span aria-hidden="true">🕘</span>履歴</button>
+    <button type="button" class="dnav rp danger" data-act="clear"><span aria-hidden="true">🗑️</span>履歴をすべて削除</button>
+    <button type="button" class="dnav rp" data-act="about"><span aria-hidden="true">ℹ️</span>このアプリについて</button>
+  </nav>
+</aside>
+
+<!-- 山の詳細 -->
+<div class="detail" id="detail" role="dialog" aria-modal="true" aria-labelledby="dtTitle" hidden>
+  <div class="detail-scroll" id="detailScroll"></div>
+</div>
+
+<!-- 出発地 -->
+<div class="scrim" id="sheetScrim" hidden></div>
+<div class="sheet glass" id="originSheet" role="dialog" aria-modal="true" aria-labelledby="originTitle" hidden>
+  <div class="grabber" aria-hidden="true"></div>
+  <div class="sheet-head"><h2 id="originTitle">出発地を設定</h2><button type="button" class="icon-btn sheet-close rp" aria-label="閉じる">×</button></div>
+  <div class="field glass-inset">
+    <input id="originInput" type="search" autocomplete="off" placeholder="駅名・住所（例：まつもと、横浜市中区）" aria-label="駅名か住所を入力" aria-controls="originList">
+  </div>
+  <p class="sheet-current">現在：<b id="originCurrent">東京駅</b></p>
+  <div class="olist-wrap"><ul class="olist" id="originList"></ul></div>
+</div>
+
+<div class="sheet glass" id="aboutSheet" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" hidden>
+  <div class="grabber" aria-hidden="true"></div>
+  <div class="sheet-head"><h2 id="aboutTitle">このアプリについて</h2><button type="button" class="icon-btn sheet-close rp" aria-label="閉じる">×</button></div>
+  <div class="about-body">
+    <p><b>やまナビ</b>は、山を一瞬で検索して、天気・地図・交通費をまとめて確認できる登山計画アプリです。</p>
+    <ul>
+      <li>山データ（全国36座）はアプリに同梱。オフラインでも検索できます。</li>
+      <li>登山指数は<a href="https://tenkura.n-kishou.co.jp/tk/" target="_blank" rel="noopener">てんきとくらす</a>と同じA/B/C基準で、Open-Meteoの山頂標高の予報から独自に算出しています（公式の値ではありません）。</li>
+      <li>地図は国土地理院の地理院タイル（淡色地図）、住所検索は国土地理院の住所検索APIを利用しています。</li>
+      <li>交通費・移動時間は距離からの概算です。実際の運賃・料金・道路状況は各公式情報で確認してください。</li>
+      <li>履歴と出発地はこの端末（localStorage）にのみ保存されます。</li>
+    </ul>
+    <p class="muted">登山は自己責任です。天候・装備・体力に合わせて無理のない計画を。</p>
+  </div>
+</div>
+
+<div class="toast glass" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
