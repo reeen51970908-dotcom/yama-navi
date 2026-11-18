@@ -532,6 +532,7 @@ T('ハンバーガー：開閉・aria-expanded・履歴全削除→元に戻す�
   await waitFor(s, () => document.getElementById('drawer').classList.contains('open'), null, { msg: 'ドロワーが開く' });
   assert(await btn.getAttribute('aria-expanded') === 'true', 'aria-expanded が true にならない');
   await sleep(500);
+  assert((await text(s, '.drawer-head small')) === 'ごっつい山見つけましょか', 'メニューのキャッチコピー');
   await shot(s, '12-drawer');
   await s.page.keyboard.press('Escape');
   await waitFor(s, () => !document.getElementById('drawer').classList.contains('open'), null, { msg: 'Esc で閉じる' });
