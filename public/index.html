@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#eef4fb">
-<meta name="description" content="やまナビ：全国の山を一瞬で検索。登山指数（A/B/C）、出発地からの地図・往復交通費・移動時間をまとめて確認できる登山計画アプリ。">
-<title>やまナビ</title>
+<meta name="description" content="山ヤクザ：全国の山を一瞬で検索。登山指数（A/B/C）、出発地からの地図・往復交通費・移動時間をまとめて確認できる登山計画アプリ。">
+<title>山ヤクザ</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/app.css">
 <link rel="modulepreload" href="js/app.js">
@@ -18,7 +18,7 @@
     <button id="menuBtn" class="icon-btn hamburger rp" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="drawer">
       <span></span><span></span><span></span>
     </button>
-    <h1 class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20 9 8l3.5 5L15 9l7 11z" fill="currentColor"/><path d="m9 8 1.8 3H7.2z" fill="#fff"/></svg>やまナビ</h1>
+    <h1 class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20 9 8l3.5 5L15 9l7 11z" fill="currentColor"/><path d="m9 8 1.8 3H7.2z" fill="#fff"/></svg>山ヤクザ</h1>
     <button id="originChip" class="origin-chip glass-chip rp" type="button" aria-haspopup="dialog" aria-controls="originSheet">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" fill="currentColor"/></svg>
       <span class="origin-name" id="originName">東京駅</span><span class="origin-suffix">発</span>
@@ -74,7 +74,7 @@
 <!-- ドロワー -->
 <div class="scrim" id="drawerScrim" hidden></div>
 <aside class="drawer glass" id="drawer" aria-label="メニュー" aria-hidden="true" inert>
-  <div class="drawer-head"><span class="brand">やまナビ</span><small>登山計画をもっと手軽に</small></div>
+  <div class="drawer-head"><span class="brand">山ヤクザ</span><small>登山計画をもっと手軽に</small></div>
   <nav class="drawer-nav">
     <button type="button" class="dnav rp" data-act="origin"><span class="dico" data-icon="pin"></span>出発地を設定</button>
     <button type="button" class="dnav rp" data-act="history"><span class="dico" data-icon="clock"></span>履歴</button>
@@ -104,7 +104,7 @@
   <div class="grabber" aria-hidden="true"></div>
   <div class="sheet-head"><h2 id="aboutTitle">このアプリについて</h2><button type="button" class="icon-btn sheet-close rp" aria-label="閉じる">×</button></div>
   <div class="about-body">
-    <p><b>やまナビ</b>は、山を一瞬で検索して、天気・地図・交通費をまとめて確認できる登山計画アプリです。</p>
+    <p><b>山ヤクザ</b>は、山を一瞬で検索して、天気・地図・交通費をまとめて確認できる登山計画アプリです。</p>
     <ul>
       <li>山データ（全国<span id="mtCount">86</span>座）はアプリに同梱。オフラインでも検索できます。</li>
       <li>登山指数は<a href="https://tenkura.n-kishou.co.jp/tk/" target="_blank" rel="noopener">てんきとくらす</a>と同じA/B/C基準で、Open-Meteoの山頂標高の予報から独自に算出しています（公式の値ではありません）。</li>

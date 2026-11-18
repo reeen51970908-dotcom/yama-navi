@@ -501,3 +501,6 @@ small { font-size: 0.78em; }
 .tk-ico .ico-drizzle, .tk-ico .ico-rain, .tk-ico .ico-heavy-rain { color: #3a7fe0; }
 .tk-ico .ico-snow { color: #5aa6d6; }
 .tk-ico .ico-thunder { color: #8a63d2; }
+
+/* アプリ名が長くても出発地ボタンと重ならないように */
+.topbar .brand { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 18px; letter-spacing: 0.01em; }

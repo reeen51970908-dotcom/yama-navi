@@ -2,7 +2,7 @@
   "name": "yama-navi",
   "version": "1.0.0",
   "private": true,
-  "description": "登山計画Webアプリ「やまナビ」",
+  "description": "登山計画Webアプリ「山ヤクザ」",
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev-server.mjs",

@@ -1,4 +1,4 @@
-# やまナビ — 登山計画Webアプリ
+# 山ヤクザ — 登山計画Webアプリ
 
 開いた瞬間に山を検索して、**登山指数（A/B/C）・出発地からの地図・往復交通費と移動時間**をまとめて確認できる、モバイルファーストの登山計画アプリです。
 ビルド不要の Vanilla JS（ES Modules）＋CSS で作り、Cloudflare Workers（Workers Static Assets）で配信しています。

@@ -203,6 +203,7 @@ T('起動直後に検索欄へフォーカスし「たかお」で高尾山が�
   await waitFor(s, () => document.querySelector('#results .mname')?.textContent.startsWith('高尾山'), null, { msg: '先頭が高尾山' });
   assert(await s.page.inputValue('#q') === 'たかお', '入力値が保持されていません');
   await waitFor(s, () => !document.getElementById('bootSkeleton'), null);
+  assert(await s.page.title() === '山ヤクザ' && (await text(s, '.topbar .brand')) === '山ヤクザ', `アプリ名: ${await s.page.title()}`);
   await shot(s, '01-search-takao');
 });
 
@@ -726,7 +727,7 @@ async function main() {
 async function writeReport({ results, pass, total, version, exe, secs }) {
   const now = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
   const esc = (x) => String(x).replace(/\|/g, '\\|').replace(/\n/g, '<br>');
-  const md = `# やまナビ E2E テストレポート
+  const md = `# 山ヤクザ E2E テストレポート
 
 - 実行日時：${now}（JST）
 - 結果：**${pass}/${total} 合格**${pass === total ? ' ✅' : ' ❌'}（${secs.toFixed(1)}秒）

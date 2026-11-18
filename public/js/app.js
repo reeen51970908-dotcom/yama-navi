@@ -439,7 +439,7 @@ function showDetail(m, pushed) {
   el.detailScroll.scrollTop = 0;
   el.detailScroll.innerHTML = detailSkeleton();
   el.detail.setAttribute('aria-busy', 'true');
-  document.title = `${m.name}｜やまナビ`;
+  document.title = `${m.name}｜山ヤクザ`;
   requestAnimationFrame(() => el.detail.classList.add('open'));
   // 天気は並行して取得
   getWeather(m, abort.signal)
@@ -467,7 +467,7 @@ function teardownDetail() {
 function hideDetail() {
   if (!state.detail) return;
   teardownDetail();
-  document.title = 'やまナビ';
+  document.title = '山ヤクザ';
   el.detail.classList.remove('open');
   el.detail.classList.add('closing');
   setTimeout(() => {
