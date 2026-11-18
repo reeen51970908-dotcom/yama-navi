@@ -40,7 +40,6 @@ const state = {
 const el = {
   q: $('#q'), qClear: $('#qClear'), chips: $('#chips'), results: $('#results'), resultHead: $('#resultHead'), noResult: $('#noResult'),
   pager: $('#pager'), tabs: $$('.tab'), ind: $('.tab-ind'),
-  carousel: $('#carousel'), dots: $('#dots'), beginner: $('#beginnerList'), recoHead: $('#recoHead'),
   hist: $('#historyList'), histEmpty: $('#historyEmpty'),
   menuBtn: $('#menuBtn'), drawer: $('#drawer'), drawerScrim: $('#drawerScrim'),
   detail: $('#detail'), detailScroll: $('#detailScroll'),
@@ -96,7 +95,6 @@ function listNote() {
 
 function refreshLists() {
   renderResults();
-  renderBeginners();
 }
 
 function openMountain(id) {
@@ -174,7 +172,7 @@ function setActiveTab(i) {
   if (state.page === i && el.tabs[i].getAttribute('aria-selected') === 'true') return;
   state.page = i;
   el.tabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.tabIndex = k === i ? 0 : -1; });
-  if (i === 2) renderHistory();
+  if (i === 1) renderHistory();
 }
 function bindPager() {
   let raf = 0;
@@ -191,51 +189,11 @@ function bindPager() {
   el.tabs.forEach((t, i) => t.addEventListener('click', () => goPage(i)));
   $('.tabs').addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    const i = (state.page + (e.key === 'ArrowRight' ? 1 : 2)) % 3;
+    const i = (state.page + 1) % 2;
     goPage(i); el.tabs[i].focus();
   });
   window.addEventListener('resize', () => { el.pager.scrollLeft = state.page * el.pager.clientWidth; sync(); });
   sync();
-}
-
-// ------------------------------------------------------------------ おすすめ
-function renderReco() {
-  const mo = currentMonth();
-  el.recoHead.textContent = `${mo}月が適期の山`;
-  const list = MOUNTAINS.filter((m) => m.bestMonths.includes(mo)).sort((a, b) => b.popular - a.popular).slice(0, 8);
-  el.carousel.innerHTML = list.map((m, i) => `<button type="button" class="slide glass" data-id="${m.id}" aria-label="${esc(m.name)}の詳細を開く（${i + 1}/${list.length}）">
-      <span class="slide-art">${pic(m, { w: 320, h: 200 }, 'l')}</span>
-      <span class="slide-cap"><b>${esc(m.name)}</b><small>${esc(m.pref)}・${m.elev.toLocaleString()}m・${DIFFICULTY_LABEL[m.difficulty]}</small></span>
-    </button>`).join('');
-  el.dots.innerHTML = list.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}"></span>`).join('');
-  renderBeginners();
-  requestAnimationFrame(syncCarousel);
-}
-function renderBeginners() {
-  const mo = currentMonth();
-  const beginners = MOUNTAINS.filter((m) => m.difficulty <= 2).sort((a, b) => (b.bestMonths.includes(mo) - a.bestMonths.includes(mo)) || b.popular - a.popular).slice(0, 10);
-  el.beginner.innerHTML = beginners.map(cardHtml).join('');
-  const note = document.getElementById('beginnerNote');
-  if (note) note.innerHTML = listNote();
-}
-function syncCarousel() {
-  const c = el.carousel;
-  const mid = c.scrollLeft + c.clientWidth / 2;
-  let best = 0; let bestD = Infinity;
-  [...c.children].forEach((s, i) => {
-    const center = s.offsetLeft + s.offsetWidth / 2;
-    const d = Math.abs(center - mid);
-    const k = Math.min(1, d / (s.offsetWidth || 1));
-    s.style.setProperty('--k', (1 - k).toFixed(3));
-    if (d < bestD) { bestD = d; best = i; }
-  });
-  [...el.dots.children].forEach((d, i) => d.classList.toggle('active', i === best));
-  c.dataset.index = String(best);
-}
-function bindCarousel() {
-  let raf = 0;
-  el.carousel.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; syncCarousel(); }); }, { passive: true });
-  window.addEventListener('resize', syncCarousel);
 }
 
 // ------------------------------------------------------------------ 履歴
@@ -343,8 +301,7 @@ function bindDrawer() {
     const act = b.dataset.act;
     closeDrawer(false);
     if (act === 'origin') openOriginSheet();
-    else if (act === 'reco') goPage(1);
-    else if (act === 'history') goPage(2);
+    else if (act === 'history') goPage(1);
     else if (act === 'clear') clearHistory();
     else if (act === 'about') openSheet(el.aboutSheet);
   });
@@ -472,7 +429,7 @@ function showDetail(m, pushed) {
   for (const s of [el.originSheet, el.aboutSheet]) closeSheet(s, false);
   hideToast();
   store.pushHistory(m.id);
-  if (state.page === 2) renderHistory();
+  if (state.page === 1) renderHistory();
   if (!el.detail.classList.contains('open')) detailReturnFocus = document.activeElement;
   const token = Symbol(m.id);
   const abort = new AbortController();
@@ -519,7 +476,7 @@ function hideDetail() {
     el.detail.classList.remove('closing');
     el.detailScroll.innerHTML = '';
   }, reducedMotion() ? 0 : 380);
-  if (state.page === 2) renderHistory();
+  if (state.page === 1) renderHistory();
   if (detailReturnFocus?.isConnected) detailReturnFocus.focus({ preventScroll: true });
 }
 
@@ -761,10 +718,8 @@ function boot() {
   renderOrigin();
   renderChips();
   renderResults();
-  renderReco();
   bindSearch();
   bindPager();
-  bindCarousel();
   bindDrawer();
   bindSheets();
   bindOrigin();

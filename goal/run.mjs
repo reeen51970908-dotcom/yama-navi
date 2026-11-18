@@ -503,39 +503,22 @@ T('履歴：開いた順・右フリックでお気に入り・左フリック�
   await waitDetail(s, '槍ヶ岳');
 });
 
-T('ページャ横フリックでタブ切替・カルーセル（画像3枚以上、フリックでドット前進、タブは動かない、スライドから詳細）', async (s) => {
+T('ページャ横フリックでタブ切替（検索⇔履歴）・インジケーター追従', async (s) => {
   await load(s);
   await s.page.locator('#q').blur();
-  const ind0 = await s.page.evaluate(() => getComputedStyle(document.querySelector('.tab-ind')).transform);
+  assert(await s.page.locator('.tab').count() === 2, 'タブが2つ（検索・履歴）でない');
+  assert(await s.page.locator('#tab-reco, #page-reco, .dnav[data-act="reco"]').count() === 0, 'おすすめタブが残っている');
   await flickEl(s, '#page-search', 'left', { dist: 0.75, y: 0.6, ms: 150 });
-  await waitFor(s, () => document.getElementById('tab-reco').getAttribute('aria-selected') === 'true', null, { msg: '左フリックで「おすすめ」タブ' });
+  await waitFor(s, () => document.getElementById('tab-history').getAttribute('aria-selected') === 'true', null, { msg: '左フリックで「履歴」タブ' });
   await waitFor(s, () => Math.abs(document.getElementById('pager').scrollLeft - document.getElementById('pager').clientWidth) < 2, null, { msg: 'ページャがスナップ' });
   await sleep(300);
-  const ind1 = await s.page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.tab-ind')).transform).m41);
-  assert(ind1 > 80, `インジケーターが追従しない: ${ind0} → ${ind1}`);
-  const slides = await s.page.evaluate(() => [...document.querySelectorAll('#carousel .slide')].map((sl) => !!sl.querySelector('svg')));
-  assert(slides.length >= 3 && slides.every(Boolean), `カルーセルのスライド: ${slides}`);
-  assert(await s.page.evaluate(() => document.querySelector('#dots .dot.active') === document.querySelector('#dots .dot')), '初期ドット');
-  await shot(s, '11-reco');
-  const pagerLeft = await s.page.evaluate(() => document.getElementById('pager').scrollLeft);
-  await flickEl(s, '#carousel', 'left', { dist: 0.5, y: 0.4, ms: 140 });
-  await waitFor(s, () => [...document.querySelectorAll('#dots .dot')].findIndex((d) => d.classList.contains('active')) >= 1, null, { msg: 'カルーセルのドットが進む' });
-  await sleep(700);
-  const st = await s.page.evaluate(() => ({
-    tab: document.getElementById('tab-reco').getAttribute('aria-selected'),
-    left: document.getElementById('pager').scrollLeft,
-    idx: [...document.querySelectorAll('#dots .dot')].findIndex((d) => d.classList.contains('active')),
-  }));
-  assert(st.tab === 'true' && Math.abs(st.left - pagerLeft) < 2, `カルーセル操作でタブが動いた: ${JSON.stringify(st)}`);
-  await shot(s, '11-reco-carousel-moved');
-  const name = await s.page.evaluate((i) => document.querySelectorAll('#carousel .slide')[i].querySelector('.slide-cap b').textContent, st.idx);
-  await s.page.locator('#carousel .slide').nth(st.idx).tap();
-  await waitDetail(s, name);
-  await closeDetail(s);
-  // 右フリックで検索タブへ戻る
-  await flickEl(s, '#beginnerList', 'right', { dist: 0.75, y: 0.3, ms: 150 });
+  const ind = await s.page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.tab-ind')).transform).m41);
+  assert(ind > 80, `インジケーターが追従しない: ${ind}`);
+  await shot(s, '11-history-tab');
+  await flickEl(s, '#page-history', 'right', { dist: 0.75, y: 0.5, ms: 150 });
   await waitFor(s, () => document.getElementById('tab-search').getAttribute('aria-selected') === 'true', null, { msg: '右フリックで「検索」タブ' });
-  return `スライド${slides.length}枚・ドット${st.idx + 1}枚目へ・「${name}」を開いた`;
+  await waitFor(s, () => document.getElementById('pager').scrollLeft < 2, null, { msg: 'ページャが先頭にスナップ' });
+  return 'タブ2つ・左右フリックで切替';
 });
 
 T('ハンバーガー：開閉・aria-expanded・履歴全削除→元に戻す・説明シート・Esc/背景タップで閉じる', async (s) => {
@@ -672,7 +655,7 @@ T('詳細・全タブ・bodyで横スクロールがはみ出さない', async (
     return out;
   }, scope);
   const problems = [];
-  for (const [i, id] of [[0, 'search'], [1, 'reco'], [2, 'history']]) {
+  for (const [i, id] of [[0, 'search'], [1, 'history']]) {
     await s.page.locator('#tab-' + id).click();
     await waitFor(s, (x) => Math.abs(document.getElementById('pager').scrollLeft - x * document.getElementById('pager').clientWidth) < 2, i, { msg: `タブ${id}` });
     await sleep(250);

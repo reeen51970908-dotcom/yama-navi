@@ -126,10 +126,10 @@ small { font-size: 0.78em; }
 .below { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
 
 /* ---------- タブ ---------- */
-.tabs { display: grid; grid-template-columns: repeat(3, 1fr); height: 44px; padding: 4px; border-radius: 16px; flex: none; }
+.tabs { display: grid; grid-template-columns: repeat(2, 1fr); height: 44px; padding: 4px; border-radius: 16px; flex: none; }
 .tab { position: relative; z-index: 1; overflow: hidden; border-radius: 12px; font-size: 14px; font-weight: 700; color: var(--ink-2); transition: color 0.25s; }
 .tab[aria-selected="true"] { color: var(--accent); }
-.tab-ind { position: absolute; left: 4px; top: 4px; bottom: 4px; width: calc((100% - 8px) / 3); border-radius: 12px; z-index: 0;
+.tab-ind { position: absolute; left: 4px; top: 4px; bottom: 4px; width: calc((100% - 8px) / 2); border-radius: 12px; z-index: 0;
   background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.75)); box-shadow: 0 3px 10px rgba(36, 66, 110, 0.14), inset 0 1px 0 #fff; will-change: transform; }
 
 .pager { flex: 1; min-height: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: var(--r-lg); }
@@ -212,21 +212,6 @@ small { font-size: 0.78em; }
 .sk-card { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: var(--r-md); background: rgba(255, 255, 255, 0.6); flex: none; }
 .sk-thumb { width: 76px; height: 58px; flex: none; border-radius: 12px; }
 .sk-col { flex: 1; }
-
-/* ---------- おすすめ・カルーセル ---------- */
-.carousel { position: relative; display: flex; gap: 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
-  padding: 10px 14% 14px; margin: 0 -2px; }
-.carousel::-webkit-scrollbar { display: none; }
-.slide { --k: 0; flex: 0 0 100%; scroll-snap-align: center; border-radius: 24px; overflow: hidden; padding: 0; text-align: left;
-  transform: scale(calc(0.86 + var(--k) * 0.14)); opacity: calc(0.6 + var(--k) * 0.4); transition: transform 0.12s linear, box-shadow 0.3s; display: block; }
-.slide-art { display: block; aspect-ratio: 16 / 10; }
-.slide-art svg { display: block; width: 100%; height: 100%; }
-.slide-cap { display: flex; flex-direction: column; padding: 10px 14px 12px; }
-.slide-cap b { font-size: 17px; }
-.slide-cap small { color: var(--ink-2); }
-.dots { display: flex; justify-content: center; gap: 6px; margin: 0 0 6px; }
-.dot { width: 7px; height: 7px; border-radius: 99px; background: rgba(27, 42, 61, 0.18); transition: width 0.35s var(--spring), background 0.3s; }
-.dot.active { width: 22px; background: var(--accent); }
 
 /* ---------- 履歴 ---------- */
 .hitem { position: relative; border-radius: var(--r-md); overflow: hidden; transition: max-height 0.25s var(--ease), opacity 0.25s; }
@@ -471,7 +456,7 @@ small { font-size: 0.78em; }
 .sort-tag { font-size: 11px; font-weight: 800; color: var(--accent); background: rgba(47, 116, 240, 0.1); padding: 1px 8px; border-radius: 999px; }
 
 /* 山の写真（イラストの上に重ねる） */
-.mthumb, .hthumb, .slide-art, .hero-art { position: relative; overflow: hidden; }
+.mthumb, .hthumb, .hero-art { position: relative; overflow: hidden; }
 .mphoto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.4s var(--ease); }
 .mphoto.loaded, .mphoto[data-loaded] { opacity: 1; }
 .hero-art { position: absolute; }

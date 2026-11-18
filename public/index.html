@@ -38,8 +38,7 @@
   <div class="below">
     <nav class="tabs glass" role="tablist" aria-label="表示切替">
       <button class="tab rp" role="tab" id="tab-search" aria-controls="page-search" aria-selected="true" data-i="0">検索</button>
-      <button class="tab rp" role="tab" id="tab-reco" aria-controls="page-reco" aria-selected="false" data-i="1" tabindex="-1">おすすめ</button>
-      <button class="tab rp" role="tab" id="tab-history" aria-controls="page-history" aria-selected="false" data-i="2" tabindex="-1">履歴</button>
+      <button class="tab rp" role="tab" id="tab-history" aria-controls="page-history" aria-selected="false" data-i="1" tabindex="-1">履歴</button>
       <span class="tab-ind" aria-hidden="true"></span>
     </nav>
 
@@ -49,13 +48,6 @@
         <h2 class="list-head" id="resultHead">人気の山</h2>
         <ul class="mlist" id="results" aria-live="polite"></ul>
         <p class="empty" id="noResult" hidden></p>
-      </section>
-      <section class="page" id="page-reco" role="tabpanel" aria-labelledby="tab-reco">
-        <h2 class="list-head" id="recoHead">今月が適期の山</h2>
-        <div class="carousel" id="carousel" aria-roledescription="カルーセル" aria-label="今月が適期の山"></div>
-        <div class="dots" id="dots" aria-hidden="true"></div>
-        <h2 class="list-head">初心者向けの山<small id="beginnerNote" class="list-note"></small></h2>
-        <ul class="mlist" id="beginnerList"></ul>
       </section>
       <section class="page" id="page-history" role="tabpanel" aria-labelledby="tab-history">
         <h2 class="list-head">最近見た山 <small>左へフリックで削除・右へフリックでお気に入り</small></h2>
@@ -85,7 +77,6 @@
   <div class="drawer-head"><span class="brand">やまナビ</span><small>登山計画をもっと手軽に</small></div>
   <nav class="drawer-nav">
     <button type="button" class="dnav rp" data-act="origin"><span class="dico" data-icon="pin"></span>出発地を設定</button>
-    <button type="button" class="dnav rp" data-act="reco"><span class="dico" data-icon="sparkle"></span>おすすめ</button>
     <button type="button" class="dnav rp" data-act="history"><span class="dico" data-icon="clock"></span>履歴</button>
     <button type="button" class="dnav rp danger" data-act="clear"><span class="dico" data-icon="trash"></span>履歴をすべて削除</button>
     <button type="button" class="dnav rp" data-act="about"><span class="dico" data-icon="info"></span>このアプリについて</button>
