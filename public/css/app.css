@@ -504,3 +504,18 @@ small { font-size: 0.78em; }
 
 /* アプリ名が長くても出発地ボタンと重ならないように */
 .topbar .brand { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 18px; letter-spacing: 0.01em; }
+
+/* ロゴ「山ヤクザ」：極太（Dela Gothic One・OFL・ロゴの文字だけ同梱）＋朱の角印 */
+@font-face { font-family: 'YamaBrand'; src: url('../fonts/dela-gothic-one-brand.woff2') format('woff2'); font-display: block; }
+.brand { color: #12151b; background: none; -webkit-background-clip: border-box; background-clip: border-box; gap: 9px; }
+.brand-text { font-family: 'YamaBrand', 'Hiragino Sans', sans-serif; font-weight: 400; font-size: 23px; letter-spacing: 0.1em; line-height: 1;
+  color: #12151b; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.brand-seal { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 5px; transform: rotate(-6deg);
+  background: linear-gradient(160deg, #e0262f, #a3111b); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85), inset 0 0 0 3.5px #a3111b, 0 3px 8px rgba(163, 17, 27, 0.35); }
+.topbar .brand { font-size: inherit; letter-spacing: 0; }
+.drawer-head .brand { gap: 10px; }
+.drawer-head .brand-text { font-size: 26px; }
+.drawer-head .brand-seal { width: 34px; height: 34px; font-size: 22px; }
+.brand-seal svg { width: 21px; height: 21px; display: block; }
+.drawer-head .brand-seal svg { width: 24px; height: 24px; }
+.drawer-head .brand { margin-bottom: 10px; }

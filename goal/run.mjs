@@ -203,7 +203,7 @@ T('起動直後に検索欄へフォーカスし「たかお」で高尾山が�
   await waitFor(s, () => document.querySelector('#results .mname')?.textContent.startsWith('高尾山'), null, { msg: '先頭が高尾山' });
   assert(await s.page.inputValue('#q') === 'たかお', '入力値が保持されていません');
   await waitFor(s, () => !document.getElementById('bootSkeleton'), null);
-  assert(await s.page.title() === '山ヤクザ' && (await text(s, '.topbar .brand')) === '山ヤクザ', `アプリ名: ${await s.page.title()}`);
+  assert(await s.page.title() === '山ヤクザ' && (await text(s, '.topbar .brand-text')) === '山ヤクザ', `アプリ名: ${await s.page.title()}`);
   await shot(s, '01-search-takao');
 });
 

@@ -89,3 +89,4 @@ npx wrangler deploy  # Cloudflare Workers へデプロイ
 - 登山指数は「てんくら基準」を参考にOpen-Meteoの予報から独自に算出したもので、てんきとくらすの公式値ではありません
 - 地図は[地理院タイル](https://maps.gsi.go.jp/development/ichiran.html)、住所検索は国土地理院の住所検索APIを利用しています
 - 登山は自己責任です。天候・装備・体力に合わせて無理のない計画を立ててください
+- ロゴの文字には [Dela Gothic One](https://github.com/syakuzen/DelaGothic)（SIL Open Font License 1.1）を、ロゴに使う4文字だけに切り出して同梱しています（`public/fonts/`、ライセンス文 `public/fonts/DelaGothicOne-OFL.txt`）
