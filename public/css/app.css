@@ -519,3 +519,13 @@ small { font-size: 0.78em; }
 .brand-seal svg { width: 21px; height: 21px; display: block; }
 .drawer-head .brand-seal svg { width: 24px; height: 24px; }
 .drawer-head .brand { margin-bottom: 10px; }
+
+/* 詳細ヒーロー：背景タップで Google マップへ */
+.hero-link { position: absolute; inset: 0; z-index: 1; display: block; -webkit-tap-highlight-color: transparent; }
+.hero-link:active ~ .hero-text { opacity: 0.85; }
+.hero-link:focus-visible { outline-offset: -4px; border-radius: 0 0 30px 30px; }
+.hero-text { pointer-events: none; z-index: 1; }
+.hero-maps { position: absolute; top: calc(var(--sat) + 20px); left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 5px;
+  height: 30px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.hero-maps .ico { width: 15px; height: 15px; color: var(--danger); }
+.hero-link:active .hero-maps { transform: translateX(-50%) scale(0.95); }

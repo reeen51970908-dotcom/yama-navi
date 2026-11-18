@@ -492,6 +492,13 @@ function detailSkeleton() {
 
 const WINTER_CLIMB = { ok: ['冬も登れる', 'ok'], snow: ['雪山装備が必要', 'snow'], closed: ['冬季閉山', 'closed'] };
 
+/** Google マップでその山を開く URL（「山名 都道府県」で検索。括弧書きは除く） */
+function mapsPlaceUrl(m) {
+  const name = m.name.replace(/（.*?）/g, '').trim();
+  const pref = m.pref.split('・')[0];
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} ${pref}`)}`;
+}
+
 function detailHtml(m) {
   const mo = currentMonth();
   const fav = store.isFav(m.id);
@@ -503,6 +510,9 @@ function detailHtml(m) {
   <header class="hero">
     <div class="hero-art">${pic(m, { w: 390, h: 260 }, 'hero')}</div>
     <div class="hero-shade"></div>
+    <a class="hero-link" href="${mapsPlaceUrl(m)}" target="_blank" rel="noopener" aria-label="${esc(m.name)}をGoogleマップで見る（新しいタブ）">
+      <span class="hero-maps glass">${icon('pin')}Googleマップで見る</span>
+    </a>
     <button type="button" class="hero-btn dt-back glass rp" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <button type="button" class="hero-btn dt-fav glass rp" aria-pressed="${fav}" aria-label="お気に入り">${icon('star', '', fav)}</button>
     ${PHOTOS[m.id] ? `<p class="hero-credit">${photoCredit(m)}</p>` : ''}

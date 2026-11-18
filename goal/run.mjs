@@ -327,6 +327,11 @@ T('詳細：スケルトン→難易度・標準タイム・適期12ヶ月・登
   assert(grades === 'ABCAB', `登山指数がフィクスチャと一致しない: ${grades}`);
   const basis = await text(s, '.tk-basis');
   assert(basis.includes('てんくら基準・山頂標高の予報から独自算出'), '算出方法の明記がない');
+  const maps = await s.page.locator('#detail .hero-link').getAttribute('href');
+  assert(maps === 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('高尾山 東京都'), `ヒーローのGoogleマップリンク: ${maps}`);
+  assert(await s.page.locator('#detail .hero-link').getAttribute('target') === '_blank', 'Googleマップは新しいタブで開く');
+  const hit = await s.page.evaluate(() => { const r = document.querySelector('#detail .hero').getBoundingClientRect(); return document.elementFromPoint(r.left + r.width / 2, r.top + r.height * 0.7)?.closest('a')?.className; });
+  assert(hit === 'hero-link', `背景をタップした位置がリンクにならない: ${hit}`);
   const href = await s.page.locator('#tenkura .tenkura-link').getAttribute('href');
   assert(href === TENKURA, `てんくらリンク: ${href}`);
   await shot(s, '05-detail-top');
