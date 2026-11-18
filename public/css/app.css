@@ -144,7 +144,8 @@ small { font-size: 0.78em; }
   transition: background 0.25s, color 0.25s, transform 0.35s var(--spring); }
 .chip:active { transform: scale(0.94); }
 .chip[aria-pressed="true"] { color: #fff; background: linear-gradient(140deg, #3a83ff, #2160d8); border-color: rgba(255, 255, 255, 0.6); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 4px 14px rgba(47, 116, 240, 0.35); }
-.chip[aria-pressed="true"]::before { content: "✓ "; }
+.chip[aria-pressed="true"]::before { content: ""; display: inline-block; width: 13px; height: 13px; margin: 0 4px -1px 0; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat; }
 
 .list-head { font-size: 15px; margin: 10px 4px 8px; font-weight: 800; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .list-head small { font-weight: 500; color: var(--ink-3); font-size: 11.5px; }
@@ -487,3 +488,31 @@ small { font-size: 0.78em; }
 .mini-seg[data-season="winter"]::before { transform: translateX(100%); }
 .mini-seg button { position: relative; z-index: 1; height: 24px; padding: 0 9px; font-size: 11.5px; font-weight: 700; color: var(--ink-3); white-space: nowrap; }
 .mini-seg button[aria-pressed="true"] { color: var(--ink); }
+
+/* SVG アイコン（絵文字の置き換え） */
+.ico { width: 1.15em; height: 1.15em; flex: none; vertical-align: -0.2em; }
+.dico { display: inline-grid; place-items: center; width: 22px; color: var(--ink-2); }
+.dico .ico { width: 20px; height: 20px; }
+.dnav.danger .dico { color: var(--danger); }
+.oico { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: rgba(47, 116, 240, 0.09); color: var(--accent); font-size: 0; flex: none; }
+.oico .ico { width: 19px; height: 19px; }
+.season-toggle button, .mini-seg button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.season-toggle .ico-sun, .mini-seg .ico-sun { color: #f29a1f; }
+.season-toggle .ico-snowflake, .mini-seg .ico-snowflake { color: #3a8ee6; }
+.cost-col h4 { display: flex; align-items: center; gap: 5px; }
+.cost-col h4 .ico { width: 17px; height: 17px; color: var(--accent); }
+.cost-note .who { display: grid; place-items: center; }
+.cost-note .who .ico { width: 15px; height: 15px; }
+.gbtn { gap: 6px; }
+.gbtn .ico { width: 17px; height: 17px; }
+.hbg .ico { width: 18px; height: 18px; margin: 0 6px; }
+.fav-star .ico { width: 15px; height: 15px; vertical-align: -0.1em; }
+.dt-fav .ico { width: 22px; height: 22px; }
+.tk-ico { display: grid; place-items: center; height: 26px; }
+.tk-ico .ico { width: 24px; height: 24px; stroke-width: 1.7; }
+.tk-ico .ico-sun { color: #f29a1f; }
+.tk-ico .ico-sun-cloud { color: #e0a23a; }
+.tk-ico .ico-cloud, .tk-ico .ico-fog { color: #7f8ea3; }
+.tk-ico .ico-drizzle, .tk-ico .ico-rain, .tk-ico .ico-heavy-rain { color: #3a7fe0; }
+.tk-ico .ico-snow { color: #5aa6d6; }
+.tk-ico .ico-thunder { color: #8a63d2; }

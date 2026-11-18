@@ -1,6 +1,7 @@
 import { MOUNTAINS, MOUNTAIN_BY_ID, DIFFICULTY_LABEL } from '../data/mountains.js';
 import { STATIONS } from '../data/stations.js';
 import { PHOTOS } from '../data/photos.js';
+import { icon } from './icons.js';
 import { $, $$, esc, normalize, currentMonth, fmtDuration, yen, haversineKm, reducedMotion, WEEK } from './util.js';
 import { searchMountains, FILTERS } from './search.js';
 import { mountainArt } from './art.js';
@@ -89,8 +90,8 @@ function listNote() {
   const w = state.season === 'winter';
   return `<span class="ln-text">${esc(state.origin.name)}発・往復の目安（${w ? '冬季' : '夏季'}）</span>`
     + `<span class="mini-seg" role="group" aria-label="交通費の季節" data-season="${state.season}">`
-    + `<button type="button" data-season-btn="summer" aria-pressed="${!w}" aria-label="夏季">☀️ 夏</button>`
-    + `<button type="button" data-season-btn="winter" aria-pressed="${w}" aria-label="冬季">❄️ 冬</button></span>`;
+    + `<button type="button" data-season-btn="summer" aria-pressed="${!w}" aria-label="夏季">${icon('sun')}夏</button>`
+    + `<button type="button" data-season-btn="winter" aria-pressed="${w}" aria-label="冬季">${icon('snowflake')}冬</button></span>`;
 }
 
 function refreshLists() {
@@ -247,11 +248,11 @@ function renderHistory() {
     const m = MOUNTAIN_BY_ID[h.id];
     const d = new Date(h.t);
     return `<li class="hitem" data-id="${m.id}" style="--i:${Math.min(i, 12)}">
-      <div class="hbg hbg-fav" aria-hidden="true">★ ${h.fav ? 'お気に入り解除' : 'お気に入り'}</div>
-      <div class="hbg hbg-del" aria-hidden="true">削除 🗑️</div>
+      <div class="hbg hbg-fav" aria-hidden="true">${icon('star', '', true)}${h.fav ? 'お気に入り解除' : 'お気に入り'}</div>
+      <div class="hbg hbg-del" aria-hidden="true">削除${icon('trash')}</div>
       <button type="button" class="hcard glass" data-id="${m.id}" aria-label="${esc(m.name)}の詳細を開く${h.fav ? '（お気に入り）' : ''}">
         <span class="hthumb">${pic(m, { w: 120, h: 90 }, 's')}</span>
-        <span class="mbody"><span class="mname">${h.fav ? '<span class="fav-star" aria-hidden="true">★</span>' : ''}${esc(m.name)}<small>${esc(m.kana)}</small></span>
+        <span class="mbody"><span class="mname">${h.fav ? `<span class="fav-star" aria-hidden="true">${icon('star', '', true)}</span>` : ''}${esc(m.name)}<small>${esc(m.kana)}</small></span>
         <span class="mmeta">${esc(m.pref)}・${m.elev.toLocaleString()}m</span>
         <span class="mmeta small">${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} に表示</span></span>
       </button>
@@ -392,7 +393,7 @@ function renderOriginList() {
     }).filter((x) => x.sc).sort((a, b) => b.sc - a.sc).slice(0, 8).map((x) => x.s)
     : STATIONS.slice(0, 12);
   const items = stations.map((s, i) => `<li style="--i:${i}"><button type="button" class="oitem rp" data-kind="station" data-name="${esc(s.name)}" data-lat="${s.lat}" data-lon="${s.lon}">
-      <span class="oico" aria-hidden="true">🚉</span><span><b>${esc(s.name)}</b><small>${esc(s.kana)}・${esc(s.pref)}</small></span></button></li>`);
+      <span class="oico" aria-hidden="true">${icon('train')}</span><span><b>${esc(s.name)}</b><small>${esc(s.kana)}・${esc(s.pref)}</small></span></button></li>`);
   el.originList.innerHTML = `<li class="ohead">${q ? '駅' : '主要駅'}</li>${items.join('') || '<li class="onone">該当する駅がありません</li>'}<li class="ohead" id="geoHead" ${raw.length >= 2 ? '' : 'hidden'}>住所検索</li><li id="geoSlot"></li>`;
   clearTimeout(geoTimer);
   geoAbort?.abort();
@@ -411,7 +412,7 @@ async function runGeocode(raw) {
     if (!slot) return;
     slot.outerHTML = results.length
       ? results.slice(0, 6).map((r, i) => `<li style="--i:${i}"><button type="button" class="oitem rp" data-kind="address" data-name="${esc(r.name)}" data-lat="${r.lat}" data-lon="${r.lon}">
-        <span class="oico" aria-hidden="true">🏠</span><span><b>${esc(r.name)}</b><small>住所検索（国土地理院）</small></span></button></li>`).join('')
+        <span class="oico" aria-hidden="true">${icon('home')}</span><span><b>${esc(r.name)}</b><small>住所検索（国土地理院）</small></span></button></li>`).join('')
       : '<li class="onone" id="geoSlot">住所が見つかりませんでした</li>';
   } catch {
     if (signal.aborted) return;
@@ -546,7 +547,7 @@ function detailHtml(m) {
     <div class="hero-art">${pic(m, { w: 390, h: 260 }, 'hero')}</div>
     <div class="hero-shade"></div>
     <button type="button" class="hero-btn dt-back glass rp" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <button type="button" class="hero-btn dt-fav glass rp" aria-pressed="${fav}" aria-label="お気に入り">${fav ? '★' : '☆'}</button>
+    <button type="button" class="hero-btn dt-fav glass rp" aria-pressed="${fav}" aria-label="お気に入り">${icon('star', '', fav)}</button>
     ${PHOTOS[m.id] ? `<p class="hero-credit">${photoCredit(m)}</p>` : ''}
     <div class="hero-text">
       <p class="hero-kana">${esc(m.kana)}</p>
@@ -585,8 +586,8 @@ function detailHtml(m) {
     <section class="card glass in cost-card" style="--i:3" aria-labelledby="h-cost" id="costCard">
       <div class="card-head"><h3 id="h-cost">往復交通費・移動時間</h3>
         <div class="season-toggle" role="group" aria-label="季節">
-          <button type="button" data-season="summer" aria-pressed="false">☀️ 夏季</button>
-          <button type="button" data-season="winter" aria-pressed="false">❄️ 冬季</button>
+          <button type="button" data-season="summer" aria-pressed="false">${icon('sun')}夏季</button>
+          <button type="button" data-season="winter" aria-pressed="false">${icon('snowflake')}冬季</button>
           <span class="seg-ind" aria-hidden="true"></span>
         </div></div>
       <p class="swipe-hint">カードを左右にフリックしても切り替えられます</p>
@@ -619,7 +620,7 @@ function bindDetail(m) {
     store.pushHistory(m.id);
     const fav = store.toggleFav(m.id);
     e.currentTarget.setAttribute('aria-pressed', String(fav));
-    e.currentTarget.textContent = fav ? '★' : '☆';
+    e.currentTarget.innerHTML = icon('star', '', fav);
     e.currentTarget.classList.remove('pop'); void e.currentTarget.offsetWidth; e.currentTarget.classList.add('pop');
     toast(fav ? 'お気に入りに追加しました' : 'お気に入りを解除しました');
   });
@@ -653,13 +654,13 @@ function renderMap(m) {
   d.map.setPoints(state.origin, m.trailhead, `道路 約${Math.round(road).toLocaleString()}km（目安）`);
   const o = `${state.origin.lat},${state.origin.lon}`; const g = `${m.trailhead.lat},${m.trailhead.lon}`;
   const gm = (mode) => `https://www.google.com/maps/dir/?api=1&origin=${o}&destination=${g}&travelmode=${mode}`;
-  $('#gmapLinks').innerHTML = `<a class="gbtn rp" href="${gm('driving')}" target="_blank" rel="noopener">🚗 Googleマップで経路（車）</a><a class="gbtn rp" href="${gm('transit')}" target="_blank" rel="noopener">🚃 Googleマップで経路（電車）</a>`;
+  $('#gmapLinks').innerHTML = `<a class="gbtn rp" href="${gm('driving')}" target="_blank" rel="noopener">${icon('car')}Googleマップ（車）</a><a class="gbtn rp" href="${gm('transit')}" target="_blank" rel="noopener">${icon('train')}Googleマップ（電車）</a>`;
   const ob = $('#dtOrigin b');
   if (ob) ob.textContent = state.origin.name;
 }
 
 function costCol(c, kind, m) {
-  const title = kind === 'car' ? '🚗 車' : '🚃 公共交通';
+  const title = kind === 'car' ? `${icon('car')}車` : `${icon('train')}公共交通`;
   if (!c.available) {
     return `<div class="cost-col cost-${kind} na"><h4>${title}</h4><div class="amount na" data-value="">利用不可</div><p class="na-reason">${esc(c.reason)}</p></div>`;
   }
@@ -687,10 +688,10 @@ function renderCost(m, animate) {
       noteMap.set(n.text, e);
     }
   }
-  const icon = (w) => (w.size === 2 ? ['ℹ️', '共通'] : w.has('car') ? ['🚗', '車'] : ['🚃', '公共交通']);
+  const whoIcon = (w) => (w.size === 2 ? ['info', '共通'] : w.has('car') ? ['car', '車'] : ['train', '公共交通']);
   const notes = [...noteMap.values()].map((n) => {
-    const [ic, label] = icon(n.who);
-    return `<li class="cost-note n-${n.type}"><span class="who" role="img" aria-label="${label}">${ic}</span><span>${esc(n.text)}</span></li>`;
+    const [ic, label] = whoIcon(n.who);
+    return `<li class="cost-note n-${n.type}"><span class="who" role="img" aria-label="${label}">${icon(ic)}</span><span>${esc(n.text)}</span></li>`;
   }).join('');
   body.innerHTML = `<div class="cost-cols">${costCol(c.car, 'car', m)}${costCol(c.transit, 'transit', m)}</div>
     ${notes ? `<ul class="notes">${notes}</ul>` : ''}
@@ -721,7 +722,7 @@ function fillWeather() {
     return `<div class="tk-day g${day.grade}" style="--i:${i}" title="${esc(day.reasons.join('・') || '登山に適しています')}">
       <span class="tk-date">${label}</span>
       <span class="grade g${day.grade}" aria-label="登山指数${day.grade}">${day.grade}</span>
-      <span class="tk-ico" aria-hidden="true">${day.icon}</span>
+      <span class="tk-ico" aria-hidden="true">${icon(/^[a-z-]+$/.test(day.icon) ? day.icon : 'unknown')}</span>
       <span class="tk-w">${esc(day.label)}</span>
       <span class="tk-t"><b class="hi">${day.tmax ?? '-'}°</b>/<b class="lo">${day.tmin ?? '-'}°</b></span>
       <span class="tk-wind">風 ${day.wind}m/s</span>
@@ -743,6 +744,7 @@ function bindKeys() {
 
 // ------------------------------------------------------------------ 起動
 function boot() {
+  for (const d of $$('[data-icon]')) d.innerHTML = icon(d.dataset.icon);
   // 写真が読み込めなければ下のイラストを見せる
   document.addEventListener('error', (e) => { if (e.target?.classList?.contains('mphoto')) e.target.remove(); }, true);
   document.addEventListener('load', (e) => { if (e.target?.classList?.contains('mphoto')) e.target.classList.add('loaded'); }, true);
