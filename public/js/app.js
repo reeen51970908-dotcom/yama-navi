@@ -706,6 +706,13 @@ function renderCost(m, animate) {
   }
 }
 
+/** 天気マーク（登山指数の欄だけは絵文字を使う）。古い API 応答の絵文字もそのまま表示 */
+const WEATHER_EMOJI = { sun: '☀️', 'sun-cloud': '⛅', cloud: '☁️', fog: '🌫️', drizzle: '🌦️', rain: '🌧️', 'heavy-rain': '🌧️', snow: '🌨️', thunder: '⛈️', unknown: '❔' };
+function weatherEmoji(v) {
+  if (v && !/^[a-z-]+$/.test(v)) return esc(v);
+  return WEATHER_EMOJI[v] || WEATHER_EMOJI.unknown;
+}
+
 function fillWeather() {
   const d = state.detail;
   const box = $('#tkDays');
@@ -722,9 +729,9 @@ function fillWeather() {
     return `<div class="tk-day g${day.grade}" style="--i:${i}" title="${esc(day.reasons.join('・') || '登山に適しています')}">
       <span class="tk-date">${label}</span>
       <span class="grade g${day.grade}" aria-label="登山指数${day.grade}">${day.grade}</span>
-      <span class="tk-ico" aria-hidden="true">${icon(/^[a-z-]+$/.test(day.icon) ? day.icon : 'unknown')}</span>
+      <span class="tk-ico" aria-hidden="true">${weatherEmoji(day.icon)}</span>
       <span class="tk-w">${esc(day.label)}</span>
-      <span class="tk-t"><b class="hi">${day.tmax ?? '-'}°</b>/<b class="lo">${day.tmin ?? '-'}°</b></span>
+      <span class="tk-t"><b class="hi" aria-label="最高">${day.tmax ?? '-'}°</b><b class="lo" aria-label="最低">${day.tmin ?? '-'}°</b></span>
       <span class="tk-wind">風 ${day.wind}m/s</span>
       <span class="tk-p">${day.precip}mm</span>
     </div>`;

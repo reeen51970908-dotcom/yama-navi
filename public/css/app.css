@@ -353,7 +353,7 @@ small { font-size: 0.78em; }
 .grade.gC { background: linear-gradient(160deg, #f47184, var(--gC)); }
 .tk-ico { font-size: 20px; line-height: 1.2; }
 .tk-w { font-size: 10px; color: var(--ink-2); line-height: 1.2; min-height: 2.4em; overflow: hidden; word-break: break-all; }
-.tk-t { font-size: 11.5px; white-space: nowrap; } .tk-t .hi { color: #e0475b; } .tk-t .lo { color: #2f74f0; }
+.tk-t { display: flex; flex-direction: column; align-items: center; font-size: 12px; line-height: 1.25; font-variant-numeric: tabular-nums; } .tk-t .hi { color: #e0475b; } .tk-t .lo { color: #2f74f0; }
 .tk-wind, .tk-p { font-size: 10.5px; color: var(--ink-3); white-space: nowrap; }
 .tk-basis { font-size: 11.5px; color: var(--ink-3); margin: 10px 2px 0; }
 .tk-error { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 14px; background: rgba(224, 71, 91, 0.08); border: 1px solid rgba(224, 71, 91, 0.25); color: #a3283a; font-size: 13px; }
@@ -509,7 +509,7 @@ small { font-size: 0.78em; }
 .fav-star .ico { width: 15px; height: 15px; vertical-align: -0.1em; }
 .dt-fav .ico { width: 22px; height: 22px; }
 .tk-ico { display: grid; place-items: center; height: 26px; }
-.tk-ico .ico { width: 24px; height: 24px; stroke-width: 1.7; }
+.tk-ico { font-size: 20px; line-height: 1; }
 .tk-ico .ico-sun { color: #f29a1f; }
 .tk-ico .ico-sun-cloud { color: #e0a23a; }
 .tk-ico .ico-cloud, .tk-ico .ico-fog { color: #7f8ea3; }
