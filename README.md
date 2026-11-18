@@ -90,3 +90,4 @@ npx wrangler deploy  # Cloudflare Workers へデプロイ
 - 地図は[地理院タイル](https://maps.gsi.go.jp/development/ichiran.html)、住所検索は国土地理院の住所検索APIを利用しています
 - 登山は自己責任です。天候・装備・体力に合わせて無理のない計画を立ててください
 - ロゴの文字には [Dela Gothic One](https://github.com/syakuzen/DelaGothic)（SIL Open Font License 1.1）を、ロゴに使う4文字だけに切り出して同梱しています（`public/fonts/`、ライセンス文 `public/fonts/DelaGothicOne-OFL.txt`）
+- ロゴの角印の梵字「カーン」（不動明王の種字）は [Noto Sans Siddham](https://github.com/notofonts/siddham)（SIL Open Font License 1.1）の字形を SVG 図形に変換したものです（ライセンス文 `public/fonts/NotoSansSiddham-OFL.txt`）
